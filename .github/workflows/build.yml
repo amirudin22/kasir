@@ -3,7 +3,7 @@ name: Build APK
 on:
   workflow_dispatch:   # bisa dijalankan manual dari tab Actions
   push:
-    branches: [ main ] # atau otomatis kalau push ke branch main
+    branches: [ main ] # otomatis jalan kalau push ke branch main
 
 jobs:
   build:
@@ -27,6 +27,11 @@ jobs:
             zlib1g-dev
           pip3 install --upgrade pip
           pip3 install cython buildozer
+
+      - name: Install Android SDK & accept licenses
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
 
       - name: Init buildozer.spec if missing
         run: |
