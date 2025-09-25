@@ -1,0 +1,67 @@
+#:import MDFillRoundIconButton kivymd.uix.button.MDFillRoundFlatButton
+
+ScreenManager:
+    LoginScreen:
+    RegisterScreen:
+    DashboardScreen:
+
+<LoginScreen>:
+    name: 'login'
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(10)
+        padding: dp(20)
+        MDLabel:
+            text: 'POS Offline - Login'
+            halign: 'center'
+            font_style: 'H5'
+        MDTextField:
+            id: username
+            hint_text: 'Username'
+        MDTextField:
+            id: password
+            hint_text: 'Password'
+            password: True
+        MDRaisedButton:
+            text: 'Login'
+            on_release: app.do_login(username.text, password.text)
+        MDTextButton:
+            text: 'Register'
+            on_release: root.manager.current = 'register'
+
+<RegisterScreen>:
+    name: 'register'
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(8)
+        padding: dp(16)
+        MDLabel:
+            text: 'Register'
+            halign: 'center'
+        MDLabel:
+            id: hwid_label
+            text: 'HWID: ' + app.hwid
+            halign: 'left'
+        MDTextField:
+            id: username
+            hint_text: 'Username'
+        MDTextField:
+            id: password
+            hint_text: 'Password'
+            password: True
+        MDTextField:
+            id: activation
+            hint_text: 'Kode Aktivasi'
+        MDRaisedButton:
+            text: 'Submit'
+            on_release: app.do_register(username.text, password.text, activation.text)
+
+<DashboardScreen>:
+    name: 'dashboard'
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: 'Dashboard'
+        MDLabel:
+            text: 'Dashboard interaktif - ringkasan transaksi hari ini'
+            halign: 'center'
