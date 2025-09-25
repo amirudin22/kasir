@@ -30,8 +30,8 @@ jobs:
 
       - name: Install Android SDK & accept licenses
         run: |
-          yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
       - name: Init buildozer.spec if missing
         run: |
@@ -41,6 +41,16 @@ jobs:
           # Update requirements sesuai project
           sed -i 's/^requirements.*/requirements = python3,kivy,kivymd,openpyxl,pillow,pyzbar,qrcode/' buildozer.spec
           sed -i 's/^# *android.permissions.*/android.permissions = CAMERA,BLUETOOTH,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE/' buildozer.spec
+
+          # Tambahkan konfigurasi Android agar pakai SDK 33 + build-tools 33.0.2
+          if ! grep -q "android.accept_sdk_license" buildozer.spec; then
+            echo "android.accept_sdk_license = True" >> buildozer.spec
+            echo "android.api = 33" >> buildozer.spec
+            echo "android.minapi = 21" >> buildozer.spec
+            echo "android.sdk = 33" >> buildozer.spec
+            echo "android.ndk = 25b" >> buildozer.spec
+            echo "android.build_tools = 33.0.2" >> buildozer.spec
+          fi
 
       - name: Build APK
         run: |
