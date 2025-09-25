@@ -1,0 +1,48 @@
+name: Build APK
+
+on:
+  workflow_dispatch:   # bisa dijalankan manual dari tab Actions
+  push:
+    branches: [ main ] # atau otomatis kalau push ke branch main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            python3-pip \
+            openjdk-17-jdk \
+            unzip zip git \
+            libffi-dev \
+            libssl-dev \
+            libsqlite3-dev \
+            zlib1g-dev
+          pip3 install --upgrade pip
+          pip3 install cython buildozer
+
+      - name: Init buildozer.spec if missing
+        run: |
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
+          # Update requirements sesuai project
+          sed -i 's/^requirements.*/requirements = python3,kivy,kivymd,openpyxl,pillow,pyzbar,qrcode/' buildozer.spec
+          sed -i 's/^# *android.permissions.*/android.permissions = CAMERA,BLUETOOTH,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE/' buildozer.spec
+
+      - name: Build APK
+        run: |
+          buildozer android debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pos_offline_apk
+          path: bin/*.apk
